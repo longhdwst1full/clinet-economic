@@ -6,9 +6,13 @@ import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import { useGetAllBlogsQuery } from "../features/blogs/blogSlice";
+import { useGetAllProductsQuery } from "../features/products/productSlice";
+import ProductItem from "../components/ProductItem";
 // import { services } from "../utils/Data";
 
 const Home = () => {
+  const getAllProducts = useGetAllProductsQuery();
+  console.log(getAllProducts);
   const getAllBlogs = useGetAllBlogsQuery();
   return (
     <>
@@ -179,10 +183,13 @@ const Home = () => {
           <div className="col-12">
             <h3 className="section-heading">Featured Collection</h3>
           </div>
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          {getAllProducts?.data &&
+            getAllProducts.data.map((item) => {
+              if (item.tags === "featured") {
+                return <SpecialProduct key={item._id} product={item} />;
+              }
+              return false;
+            })}
         </div>
       </Container>
 
@@ -258,10 +265,12 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
-          <SpecialProduct />
+          {getAllProducts?.data &&
+            getAllProducts.data.map((item) => {
+              // if (item.tags === "special") {
+              return <SpecialProduct key={item._id} data={item} />;
+              // }
+            })}
         </div>
       </Container>
       <Container class1="popular-wrapper py-5 home-wrapper-2">
@@ -271,10 +280,12 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          {getAllProducts?.data &&
+            getAllProducts.data.map((item) => {
+              // if (item.tags === "popular") {
+              return <ProductItem key={item._id} product={item} />;
+              // }
+            })}
         </div>
       </Container>
       <Container class1="marque-wrapper home-wrapper-2 py-5">

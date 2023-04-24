@@ -46,7 +46,10 @@ a {
 .gap-30 {
   gap: 30px;
 }
-
+.error{
+  color: red;
+  font-style: 12px;
+}
 .button {
   background-color: var(--color-232f3e);
   color: white;

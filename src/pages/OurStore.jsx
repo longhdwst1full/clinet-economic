@@ -11,7 +11,7 @@ const OurStore = () => {
   const [grid, setGrid] = useState(4);
   const productList = useGetAllProductsQuery();
   const { data, isLoading, isFetching } = productList
-  console.log(productList)
+  // console.log(productList)
   return (
     <>
       <Meta title={"Our Store"} />

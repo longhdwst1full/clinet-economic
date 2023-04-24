@@ -11,8 +11,8 @@ import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useAddToWishListMutation } from "../features/products/productSlice";
 
-const ProductCard = (props) => {
-  const { grid, data } = props;
+const ProductItem = (props) => {
+  const { grid=0, product } = props;
 
   let location = useLocation();
   const [addToWishListFn, addToWishListRep] = useAddToWishListMutation()
@@ -32,11 +32,10 @@ const ProductCard = (props) => {
   }
   return (
     <>
-      {data &&Array.isArray(data) && data.map(product => {
-        return (
+     
 
 
-          <div key={product._id}
+          <div 
             className={` ${location.pathname === "/product" ? `gr-${grid}` : "col-3"
               } `}
           >
@@ -92,10 +91,9 @@ const ProductCard = (props) => {
 
 
 
-        )
-      })}
+       
     </>
   );
 };
 
-export default ProductCard;
+export default ProductItem;
