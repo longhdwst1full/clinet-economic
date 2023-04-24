@@ -234,6 +234,7 @@ footer .input-group-text {
 }
 .blog-content {
   padding: 15px;
+  min-height: 221px;
 }
 .blog-contentp.date {
   font-size: 13px;

@@ -5,9 +5,11 @@ import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
+import { useGetAllBlogsQuery } from "../features/blogs/blogSlice";
 // import { services } from "../utils/Data";
 
 const Home = () => {
+  const getAllBlogs = useGetAllBlogsQuery();
   return (
     <>
       <Container class1="home-wrapper-1 py-5">
@@ -317,18 +319,17 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-3">
-            <BlogCard />
-          </div>
-          <div className="col-3">
-            <BlogCard />
-          </div>
-          <div className="col-3">
-            <BlogCard />
-          </div>
-          <div className="col-3">
-            <BlogCard />
-          </div>
+          {getAllBlogs.data &&
+            getAllBlogs.data.map((item, index) => {
+              if (index < 4) {
+                return (
+                  <div key={item._id} className="col-3 ">
+                    <BlogCard data={item} />
+                  </div>
+                );
+              }
+              return false;
+            })}
         </div>
       </Container>
     </>

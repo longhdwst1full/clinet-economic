@@ -44,7 +44,7 @@ const Login = () => {
       if (result && isSuccess) {
 
         console.log("adddf")
-        localStorage.setItem("user", JSON.stringify(result.data))
+        localStorage.setItem("customer", JSON.stringify(result.data))
         toast.success("Dang  nhap thanh cong")
         navigate("/")
       }

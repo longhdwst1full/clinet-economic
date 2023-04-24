@@ -1,5 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+
+export const getUserFromLS = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem("customer")) : null
+
 export const userApi = createApi({
     reducerPath: "auth",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
@@ -24,9 +27,22 @@ export const userApi = createApi({
                 }
             },
 
+        }),
+
+        getUserProductsWithList: buider.query({
+            query() {
+                return {
+                    url: "user/wishlist",
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                    },
+                }
+            },
+            providesTags: ['addToWishList']
+
         })
     })
 })
 
-console.log(userApi)
-export const { useRegisterUserMutation, useLoginUserMutation } = userApi;
+// console.log(userApi)
+export const { useGetUserProductsWithListQuery, useRegisterUserMutation, useLoginUserMutation } = userApi;
