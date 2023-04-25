@@ -1,13 +1,20 @@
 import React from "react";
 
-const Color = () => {
+const Color = ({ data, setColor }) => {
   return (
     <>
       <ul className="colors ps-0">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
+        {data &&
+          data.map((colorItem, index) => {
+            return (
+              <li
+                style={{ backgroundColor: colorItem.color }}
+                onClick={() => setColor(colorItem._id)}
+                className="cursor-pointer"
+                key={index}
+              ></li>
+            );
+          })}
       </ul>
     </>
   );

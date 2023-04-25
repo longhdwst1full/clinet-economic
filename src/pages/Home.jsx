@@ -11,6 +11,7 @@ import ProductItem from "../components/ProductItem";
 // import { services } from "../utils/Data";
 
 const Home = () => {
+ 
   const getAllProducts = useGetAllProductsQuery();
   console.log(getAllProducts);
   const getAllBlogs = useGetAllBlogsQuery();

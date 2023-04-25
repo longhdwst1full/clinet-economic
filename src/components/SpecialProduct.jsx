@@ -2,20 +2,21 @@ import React from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link } from "react-router-dom";
 const SpecialProduct = ({ data }) => {
-
   return (
     <>
       <div className="col-6 mb-3">
         <div className="special-product-card">
           <div className="d-flex justify-content-between">
             <div>
-              <img src={data?.images[0] ? data?.images[0].url : "images/watch.jpg"} className="img-fluid" alt="watch" />
+              <img
+                src={data?.images[0] ? data?.images[0].url : "images/watch.jpg"}
+                className="img-fluid"
+                alt="watch"
+              />
             </div>
             <div className="special-product-content">
               <h5 className="brand">{data?.brand}</h5>
-              <h6 className="title">
-                {data?.title}
-              </h6>
+              <h6 className="title">{data?.title}</h6>
               <ReactStars
                 count={5}
                 size={24}
@@ -43,16 +44,23 @@ const SpecialProduct = ({ data }) => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: data?.quantity / data?.sold + data?.quantity * 100 + "%" }}
-
-                    aria-valuenow={(data?.quantity / data?.sold + data?.quantity) * 100}
-
+                    style={{
+                      width:
+                        data?.quantity / data?.sold +
+                        data?.quantity * 100 +
+                        "%",
+                    }}
+                    aria-valuenow={
+                      (data?.quantity / data?.sold + data?.quantity) * 100
+                    }
                     aria-valuemin={data?.quantity}
                     aria-valuemax={data?.sold + data?.quantity}
                   ></div>
                 </div>
               </div>
-              <Link className="button">Add to Cart</Link>
+              <Link className="button" to={`product/${data._id}`}>
+                View
+              </Link>
             </div>
           </div>
         </div>

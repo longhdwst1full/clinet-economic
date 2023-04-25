@@ -40,9 +40,36 @@ export const userApi = createApi({
             },
             providesTags: ['addToWishList']
 
+        }),
+
+        addToCart: buider.mutation({
+            query(body) {
+                return {
+                    url: "user/cart",
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                    },
+                    method: "POST",
+                    body: body
+                }
+            }
+        }),
+
+        getUserAddToCart: buider.query({
+            query() {
+                return {
+                    url: "user/cart",
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                    }
+                }
+            }
         })
     })
 })
 
-// console.log(userApi)
-export const { useGetUserProductsWithListQuery, useRegisterUserMutation, useLoginUserMutation } = userApi;
+console.log(userApi)
+export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
+    useGetUserAddToCartQuery,
+    useAddToCartMutation,
+    useLoginUserMutation } = userApi;
