@@ -80,7 +80,12 @@ const SingleProduct = () => {
     if (addToCartRep.isSuccess) {
       toast.success("Add to cart successfully");
     }
-  }, [addToCartRep.isSuccess]);
+    if(addToCartRep.error)
+    {
+      toast.error("error");
+
+    }
+  }, [addToCartRep.error, addToCartRep.isSuccess]);
   return (
     <>
       <Meta title={"Product Name"} />

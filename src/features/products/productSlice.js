@@ -27,8 +27,7 @@ export const productsApi = createApi({
                     },
 
                 }
-            },
-            invalidatesTags: ['addToWishList']
+            }
         }),
     })
 })

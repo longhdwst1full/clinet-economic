@@ -38,7 +38,8 @@ export const userApi = createApi({
                     },
                 }
             },
-            providesTags: ['addToWishList']
+           
+
 
         }),
 
@@ -52,7 +53,8 @@ export const userApi = createApi({
                     method: "POST",
                     body: body
                 }
-            }
+            },
+            invalidatesTags: (result, error, body) => [{ type: 'CartUser', id: 'LIST' }]
         }),
 
         getUserAddToCart: buider.query({
@@ -63,6 +65,60 @@ export const userApi = createApi({
                         Authorization: `Bearer ${getUserFromLS?.token}`,
                     }
                 }
+            },
+            providesTags(result) {
+                console.log("result", result);
+                if (result) {
+
+                    const final = [
+                        ...result.map((item) => {
+
+                            return ({ type: 'CartUser', id: item._id })
+                        }
+                        ),
+                        { type: 'CartUser', id: 'LIST' }
+                    ]
+                    return final
+                }
+
+                return [{ type: 'CartUser', id: 'LIST' }]
+            }
+        }),
+
+        deleteUserAddToCart: buider.mutation({
+            query(cartItemId) {
+                return {
+                    url: `user/delete-product-cart`,
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                    },
+                    body: {
+                        cartItemId
+                    },
+                    method: "DELETE"
+
+                }
+            },
+            invalidatesTags: (result, error, id) => {
+
+                return [{ type: 'CartUser', id: id }]
+            }
+        }),
+
+        updateQuantityUserAddToCart: buider.mutation({
+            query({ cartItemId, newQuantity }) {
+                return {
+                    url: `user/update-product-cart/${cartItemId}/${newQuantity}`,
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                    },
+                    method: "POST"
+
+                }
+            },
+            invalidatesTags: (result, error, id) => {
+
+                return [{ type: 'CartUser', id: id.cartItemId }]
             }
         })
     })
@@ -72,4 +128,6 @@ console.log(userApi)
 export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useGetUserAddToCartQuery,
     useAddToCartMutation,
-    useLoginUserMutation } = userApi;
+    useLoginUserMutation, useDeleteUserAddToCartMutation,
+    useUpdateQuantityUserAddToCartMutation
+} = userApi;

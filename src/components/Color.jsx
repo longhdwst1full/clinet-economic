@@ -8,7 +8,7 @@ const Color = ({ data, setColor }) => {
           data.map((colorItem, index) => {
             return (
               <li
-                style={{ backgroundColor: colorItem.color }}
+                style={{ backgroundColor: colorItem.title }}
                 onClick={() => setColor(colorItem._id)}
                 className="cursor-pointer"
                 key={index}
