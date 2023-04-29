@@ -15,7 +15,10 @@ import {
   useGetOneProductQuery,
 } from "../features/products/productSlice";
 import { toast } from "react-toastify";
-import { useAddToCartMutation } from "../features/user/userSlice";
+import {
+  useAddToCartMutation,
+  useGetUserAddToCartQuery,
+} from "../features/user/userSlice";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -24,19 +27,8 @@ const SingleProduct = () => {
 
   const productItems = useGetOneProductQuery(id);
   const [addToWishListFn, addToWishListRep] = useAddToWishListMutation();
-  // console.log(productItems?.data?.color);
-
-  const handleClickAddToWishList = async (id) => {
-    try {
-      addToWishListFn(id);
-
-      if (addToWishListRep?.error?.status == 500) {
-        toast.error("Ban can dang nhap");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const cartListUserState = useGetUserAddToCartQuery();
+  const [alreadyAddProduct, setAlreadyAddProduct] = useState(false);
 
   const props = {
     width: 594,
@@ -77,15 +69,29 @@ const SingleProduct = () => {
     console.log(id);
   };
   useEffect(() => {
+    const { data } = cartListUserState;
+    console.log("data", data);
+    for (let i = 0; i < data?.length; i++) {
+      if (id === data[i]?.productId?._id) {
+        setAlreadyAddProduct(true);
+      }
+    }
+  }, [cartListUserState, id]);
+
+  useEffect(() => {
+    if (
+      (addToWishListRep || addToCartRep)?.error?.status === 500 ||
+      (addToWishListRep || addToCartRep)?.error?.status === "500"
+    ) {
+      toast.error("Ban can dang nhap");
+    }
     if (addToCartRep.isSuccess) {
       toast.success("Add to cart successfully");
     }
-    if(addToCartRep.error)
-    {
+    if ((addToCartRep || addToWishListRep).error) {
       toast.error("error");
-
     }
-  }, [addToCartRep.error, addToCartRep.isSuccess]);
+  }, [addToCartRep, addToWishListRep, addToWishListRep?.error?.status]);
   return (
     <>
       <Meta title={"Product Name"} />
@@ -166,36 +172,57 @@ const SingleProduct = () => {
                     })}
                   </div>
                 </div>
-                <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                  <h3 className="product-heading">Color :</h3>
-                  <Color setColor={setColor} data={productItems?.data?.color} />
-                </div>
-                <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                  <h3 className="product-heading">Quantity :</h3>
-                  <div className="">
-                    <input
-                      type="number"
-                      name=""
-                      min={1}
-                      max={10}
-                      value={quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
-                      className="form-control"
-                      style={{ width: "70px" }}
-                      id=""
+                {!alreadyAddProduct && (
+                  <div className="d-flex gap-10 flex-column mt-2 mb-3">
+                    <h3 className="product-heading">Color :</h3>
+                    <Color
+                      setColor={setColor}
+                      data={productItems?.data?.color}
                     />
                   </div>
+                )}
+
+                <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
+                  {!alreadyAddProduct && (
+                    <>
+                      <h3 className="product-heading">Quantity :</h3>
+                      <div className="">
+                        <input
+                          type="number"
+                          name=""
+                          min={1}
+                          max={10}
+                          value={quantity}
+                          onChange={(e) => setQuantity(e.target.value)}
+                          className="form-control"
+                          style={{ width: "70px" }}
+                          id=""
+                        />
+                      </div>
+                    </>
+                  )}
+
                   <div className="d-flex align-items-center gap-30 ms-5">
-                    <button
-                      className="button border-0"
-                      // data-bs-toggle="modal"
-                      // data-bs-target="#staticBackdrop"
-                      type="button"
-                      onClick={() => handleAddToCart(productItems?.data?._id)}
-                    >
-                      Add to Cart
-                    </button>
-                    <button className="button signup">Buy It Now</button>
+                    {!alreadyAddProduct ? (
+                      <>
+                        <button
+                          className="button border-0"
+                          // data-bs-toggle="modal"
+                          // data-bs-target="#staticBackdrop"
+                          type="button"
+                          onClick={() =>
+                            handleAddToCart(productItems?.data?._id)
+                          }
+                        >
+                          Add to Cart
+                        </button>
+                        <button className="button signup">Buy It Now</button>
+                      </>
+                    ) : (
+                      <Link className="button border-0" to="/cart">
+                        View Cart
+                      </Link>
+                    )}
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">
@@ -207,8 +234,8 @@ const SingleProduct = () => {
                   <div>
                     <Link to="">
                       <AiOutlineHeart
-                        onClick={() =>
-                          handleClickAddToWishList(productItems?.data?._id)
+                        onClick={async () =>
+                          await addToWishListFn(productItems?.data?._id)
                         }
                         className="fs-5 me-2"
                       />

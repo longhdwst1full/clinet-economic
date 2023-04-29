@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import compare from "../images/compare.svg";
@@ -6,7 +6,24 @@ import wishlist from "../images/wishlist.svg";
 import user from "../images/user.svg";
 import cart from "../images/cart.svg";
 import menu from "../images/menu.svg";
+import {
+  useGetUserAddToCartQuery,
+  getUserFromLS,
+} from "../features/user/userSlice";
 const Header = () => {
+  const { data } = useGetUserAddToCartQuery();
+
+  const totalPrice = useMemo(
+    () =>
+      data &&
+      data.length > 0 &&
+      data.reduce((result, current) => {
+        return result + current.price * current.quantity;
+      }, 0),
+
+    [data]
+  );
+
   return (
     <>
       <header className="header-top-strip py-3">
@@ -80,9 +97,16 @@ const Header = () => {
                     className="d-flex align-items-center gap-10 text-white"
                   >
                     <img src={user} alt="user" />
-                    <p className="mb-0">
-                      Log in <br /> My Account
-                    </p>
+                    {getUserFromLS ? (
+                      <p className="mb-0 d-flex flex-column align-items-center">
+                        {getUserFromLS?.name} 
+                        {getUserFromLS?.email}
+                      </p>
+                    ) : (
+                      <p className="mb-0">
+                        Log in <br /> My Account
+                      </p>
+                    )}
                   </Link>
                 </div>
                 <div>
@@ -92,8 +116,10 @@ const Header = () => {
                   >
                     <img src={cart} alt="cart" />
                     <div className="d-flex flex-column gap-10">
-                      <span className="badge bg-white text-dark">0</span>
-                      <p className="mb-0">$ 500</p>
+                      <span className="badge bg-white text-dark">
+                        {data ? data.length : 0}
+                      </span>
+                      <p className="mb-0">$ {totalPrice}</p>
                     </div>
                   </Link>
                 </div>

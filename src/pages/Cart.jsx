@@ -14,16 +14,15 @@ import {
 
 const Cart = () => {
   const { data } = useGetUserAddToCartQuery();
- 
+
   const [deleteUserAddToCarFN, deleteUserAddRep] =
     useDeleteUserAddToCartMutation();
   const [updateUserAddToCartFn, updateUserAddToCartRep] =
     useUpdateQuantityUserAddToCartMutation();
-  const [quantity, setQuantity] = useState(null);
+
   const hanleDeleteCart = async (id) => {
     try {
       deleteUserAddToCarFN(id);
-      
     } catch (error) {
       console.log(error);
     }
@@ -31,7 +30,10 @@ const Cart = () => {
 
   const hanleUpdateQuantityCart = async (data) => {
     try {
-      updateUserAddToCartFn({ cartItemId: data.id, newQuantity: data.quantity });
+      updateUserAddToCartFn({
+        cartItemId: data.id,
+        newQuantity: data.quantity,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -51,13 +53,12 @@ const Cart = () => {
       data &&
       data.length > 0 &&
       data.reduce((result, current) => {
-        console.log("current", current);
         return result + current.price * current.quantity;
       }, 0),
 
     [data]
   );
-  console.log(totalPrice);
+
   return (
     <>
       <Meta title={"Cart"} />
@@ -111,7 +112,6 @@ const Cart = () => {
                         type="number"
                         value={item?.quantity}
                         onChange={async (e) => {
-                         
                           hanleUpdateQuantityCart({
                             id: item._id,
                             quantity: e.target.value,
