@@ -1,9 +1,11 @@
 import React from "react";
-import { getTokenLs } from "../features/user/userSlice";
+import { getUserFromLS } from "../features/user/userSlice";
 import { Navigate } from "react-router-dom";
 
 export default function OpenRoute({ children }) {
-  return getTokenLs?.token === undefined ? (
+  const user = getUserFromLS();
+
+  return user?.token === undefined ? (
     children
   ) : (
     <Navigate to="/" replace={true} />
