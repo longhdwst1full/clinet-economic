@@ -2,7 +2,14 @@ import React, { forwardRef } from "react";
 import { useController } from "react-hook-form";
 
 const CustomInputForWorkRef = forwardRef((props, ref) => {
-  const { placeholder, className, name, type, defaultValue, control } = props;
+  const {
+    placeholder,
+    className: classinput,
+    name,
+    type,
+    defaultValue,
+    control,
+  } = props;
   const {
     field: { value, onChange, onBlur },
     fieldState: { error },
@@ -16,7 +23,7 @@ const CustomInputForWorkRef = forwardRef((props, ref) => {
       <div>
         <input
           type={type}
-          className={`form-control ${className}`}
+          className={`form-control ${classinput}`}
           placeholder={placeholder}
           {...{ onChange, onBlur, value, name }}
           ref={ref}

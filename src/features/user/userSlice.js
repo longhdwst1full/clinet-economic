@@ -1,11 +1,55 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+// import jwt from 'jsonwebtoken'
+
 
 
 export const getUserFromLS = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem("customer")) : null
 
 export const userApi = createApi({
     reducerPath: "auth",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: "http://localhost:5000/api",
+        prepareHeaders: (headers) => {
+            const accessToken = getUserFromLS?.token;
+            headers.set('Authorization', `Bearer ${accessToken}`);
+            return headers;
+        },
+        onQueryStarted: async (request, { dispatch }) => {
+            const accessToken = getUserFromLS?.token;
+
+            if (accessToken) {
+                //   const refreshToken = getRefreshToken();
+
+                //   try {
+                //     const result = await dispatch(refreshToken());
+                //     setAccessToken(result.payload.accessToken);
+                //     setRefreshToken(result.payload.refreshToken);
+                //   } catch (error) {
+                //     console.error(error);
+                //   }
+            }
+        },
+        onQueryError: async (error, query, retries) => {
+            const { statusCode } = error.response;
+
+            if (statusCode === 401 || statusCode === 403) {
+                //   const refreshToken = getRefreshToken();
+
+                //   try {
+                //     const result = await query.dispatch(refreshToken());
+                //     // setAccessToken(result.payload.accessToken);
+                //     // setRefreshToken(result.payload.refreshToken);
+                //     console.log(result)
+                //     // Retry the failed request with the updated access token
+                //     return query.retry();
+                //   } catch (error) {
+                //     console.error(error);
+                //   }
+            }
+
+            throw error;
+        },
+    }),
     endpoints: (buider) => ({
         registerUser: buider.mutation({
             query(body) {
@@ -38,7 +82,7 @@ export const userApi = createApi({
                     },
                 }
             },
-           
+
 
 
         }),
@@ -67,7 +111,7 @@ export const userApi = createApi({
                 }
             },
             providesTags(result) {
-                console.log("result", result);
+
                 if (result) {
 
                     const final = [
@@ -112,7 +156,8 @@ export const userApi = createApi({
                     headers: {
                         Authorization: `Bearer ${getUserFromLS?.token} `,
                     },
-                    method: "POST"
+                    method: "POST",
+                    body: ""
 
                 }
             },
@@ -120,6 +165,36 @@ export const userApi = createApi({
 
                 return [{ type: 'CartUser', id: id.cartItemId }]
             }
+        }),
+
+        createOrderByUser: buider.mutation({
+            query(body) {
+                return {
+                    url: `user/cart/create-order`,
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                    },
+                    method: "POST",
+                    body: body
+
+                }
+            }
+
+        }),
+
+        getUserOrders: buider.query({
+            query: () => {
+                return {
+                    url: `user/getmyorders`,
+                    headers: {
+                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                    },
+                    method: "GET",
+
+
+                }
+            }
+
         })
     })
 })
@@ -127,7 +202,10 @@ export const userApi = createApi({
 console.log(userApi)
 export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useGetUserAddToCartQuery,
+    useGetUserOrdersQuery,
+    useCreateOrderByUserMutation,
     useAddToCartMutation,
-    useLoginUserMutation, useDeleteUserAddToCartMutation,
+    useLoginUserMutation,
+    useDeleteUserAddToCartMutation,
     useUpdateQuantityUserAddToCartMutation
 } = userApi;

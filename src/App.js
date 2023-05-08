@@ -1,4 +1,6 @@
 import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
@@ -26,6 +28,7 @@ import PrivateRouter from "./routings/PrivateRouter";
 import Myorder from "./pages/user/Myorder";
 import MyProfile from "./pages/user/MyProfile";
 import LayoutUser from "./pages/user/Layout";
+import ChangePassword from "./pages/user/ChangePassword";
 function App() {
   return (
     <>
@@ -57,9 +60,10 @@ function App() {
 
               } />
               <Route path="my-profile" element={
-
                 <MyProfile />
-
+              } />
+              <Route path="change-my-password" element={
+                <ChangePassword />
               } />
             </Route>
             <Route path="checkout" element={<PrivateRouter>
