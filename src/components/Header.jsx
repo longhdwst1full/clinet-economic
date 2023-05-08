@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import compare from "../images/compare.svg";
 import wishlist from "../images/wishlist.svg";
@@ -9,9 +9,15 @@ import menu from "../images/menu.svg";
 import {
   useGetUserAddToCartQuery,
   getUserFromLS,
+  clearLSUser,
 } from "../features/user/userSlice";
+import Popover from "./Popover";
+import { toast } from "react-toastify";
 const Header = () => {
   const { data } = useGetUserAddToCartQuery();
+
+  const userLs = getUserFromLS();
+  const navigate = useNavigate();
 
   const totalPrice = useMemo(
     () =>
@@ -23,6 +29,21 @@ const Header = () => {
 
     [data]
   );
+  const handleLogout = () => {
+    fetch("/logout")
+      .then((response) => {
+        if (response.ok) {
+          clearLSUser();
+          toast.success("Logout Success");
+          navigate("/login");
+        } else {
+          toast.error("Logout failed");
+        }
+      })
+      .catch((error) => {
+        toast.error("Logout failed", error);
+      });
+  };
 
   return (
     <>
@@ -91,24 +112,58 @@ const Header = () => {
                     </p>
                   </Link>
                 </div>
-                <div>
-                  <Link
-                    to="/login"
-                    className="d-flex align-items-center gap-10 text-white"
+                {userLs ? (
+                  <Popover
+                    renderPopover={
+                      <div className="tw-relative tw-z-10  tw-rounded-sm border tw-border-gray-200 tw-bg-white tw-shadow-md ">
+                        <Link
+                          to="/user/my-profile"
+                          className="tw-block tw-w-full tw-bg-white tw-py-3 tw-px-4 tw-text-left hover:tw-bg-slate-100  tw-text-black tw-hover:tw-text-cyan-500"
+                        >
+                          Tài khoản của tôi
+                        </Link>
+                        <Link
+                          to="/user/myorders"
+                          className="tw-block tw-w-full tw-text-black tw-bg-white tw-py-3 tw-px-4 tw-text-left hover:tw-bg-slate-100 hover:tw-text-cyan-500"
+                        >
+                          Đơn mua
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="tw-border-none tw-block tw-w-full tw-bg-white tw-py-3 tw-px-4 tw-text-left hover:tw-bg-slate-100 hover:tw-text-cyan-500"
+                        >
+                          Đăng xuất
+                        </button>
+                      </div>
+                    }
                   >
-                    <img src={user} alt="user" />
-                    {getUserFromLS ? (
+                    <Link
+                      to="/user/my-profile"
+                      className="d-flex align-items-center gap-10 text-white"
+                    >
+                      <img src={user} alt="user" />
+
                       <p className="mb-0 d-flex flex-column align-items-center">
-                        {getUserFromLS?.name} 
-                        {getUserFromLS?.email}
+                        {userLs?.name}
+                        {userLs?.email}
                       </p>
-                    ) : (
+                    </Link>
+                  </Popover>
+                ) : (
+                  <div>
+                    <Link
+                      to="/login"
+                      className="d-flex align-items-center gap-10 text-white"
+                    >
+                      <img src={user} alt="user" />
+
                       <p className="mb-0">
                         Log in <br /> My Account
                       </p>
-                    )}
-                  </Link>
-                </div>
+                    </Link>
+                  </div>
+                )}
+
                 <div>
                   <Link
                     to="/cart"

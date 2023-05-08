@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import "./App.css";
@@ -29,7 +29,17 @@ import Myorder from "./pages/user/Myorder";
 import MyProfile from "./pages/user/MyProfile";
 import LayoutUser from "./pages/user/Layout";
 import ChangePassword from "./pages/user/ChangePassword";
+import { LocalStorageEventTarget, clearLSUser, getTokenLs } from "./features/user/userSlice";
+
 function App() {
+  useEffect(() => {
+    const handleClearLS = () => {
+      clearLSUser();
+    };
+
+    window.addEventListener('clearLS', handleClearLS);
+    return () => window.removeEventListener('clearLS', handleClearLS);
+  }, []);
   return (
     <>
       <BrowserRouter>
@@ -49,7 +59,7 @@ function App() {
             } />
 
 
-            <Route path="/" element={
+            <Route path="/user" element={
               <PrivateRouter>
                 <LayoutUser />
               </PrivateRouter>

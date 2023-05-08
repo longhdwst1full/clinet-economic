@@ -4,55 +4,47 @@ import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup"
-import { toast } from "react-toastify"
-import { useForm } from "react-hook-form"
+import * as Yup from "yup";
+import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../features/user/userSlice";
 import CustomInputForWorkRef from "../components/CustomInputForwrokRef";
 
-
 const validateForm = Yup.object({
   email: Yup.string().email().required(),
-  password: Yup.string().required()
-})
+  password: Yup.string().required(),
+});
 const Login = () => {
-  const navigate = useNavigate()
-  const [loginFn, loginRes] = useLoginUserMutation()
-  const { isError, isSuccess, isLoading } = loginRes
-  console.log(loginRes)
+  const navigate = useNavigate();
+  const [loginFn, loginRes] = useLoginUserMutation();
+  const { isError, isSuccess, isLoading } = loginRes;
  
   const { handleSubmit, setError, control } = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
-    resolver: yupResolver(validateForm)
-
-  })
+    resolver: yupResolver(validateForm),
+  });
 
   const proccessSubmitForm = async (data) => {
     try {
-
-      const result = await loginFn(data)
-      console.log(result, "result")
+      const result = await loginFn(data);
 
       if (result.error?.status === 500) {
         toast.error(result.error.data.message);
       }
 
       if (result && isSuccess) {
-
-        console.log("adddf")
-        localStorage.setItem("customer", JSON.stringify(result.data))
-        toast.success("Dang  nhap thanh cong")
-        navigate("/")
+        localStorage.setItem("customer", JSON.stringify(result.data));
+        toast.success("Dang  nhap thanh cong");
+        navigate("/");
       }
-
     } catch (error) {
-      console.log(error)
+      toast.error(error);
     }
-  }
+  };
   return (
     <>
       <Meta title={"Login"} />
@@ -63,18 +55,25 @@ const Login = () => {
           <div className="col-12">
             <div className="auth-card">
               <h3 className="text-center mb-3">Login</h3>
-              <form method="post" onSubmit={handleSubmit(proccessSubmitForm)
-              } className="d-flex flex-column gap-15">
-                <CustomInputForWorkRef type="email"
-                  onChange={(e) => e.target.value} control={control}
-                  name="email" placeholder="Email"
+              <form
+                method="post"
+                onSubmit={handleSubmit(proccessSubmitForm)}
+                className="d-flex flex-column gap-15"
+              >
+                <CustomInputForWorkRef
+                  type="email"
+                  onChange={(e) => e.target.value}
+                  control={control}
+                  name="email"
+                  placeholder="Email"
                 />
 
                 <CustomInputForWorkRef
                   type="password"
                   name="password"
                   placeholder="Password"
-                  onChange={(e) => e.target.value} control={control}
+                  onChange={(e) => e.target.value}
+                  control={control}
                 />
                 <div>
                   <Link to="/forgot-password">Forgot Password?</Link>

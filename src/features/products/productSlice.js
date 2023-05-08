@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getUserFromLS } from "../user/userSlice";
 
-
-const token = getUserFromLS?.token
+const userLs= getUserFromLS();
+const token = userLs?.token
+ 
 export const productsApi = createApi({
     reducerPath: "products",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
@@ -17,7 +18,7 @@ export const productsApi = createApi({
         }),
         addToWishList: buider.mutation({
             query(id) {
-                console.log(id)
+               
                 return {
                     url: "product/wishlist",
                     method: "PUT",
@@ -31,7 +32,7 @@ export const productsApi = createApi({
         }),
         addRatingProducts: buider.mutation({
             query(data) {
-                // console.log(id)
+               
                 return {
                     url: "product/rating",
                     method: "PUT",

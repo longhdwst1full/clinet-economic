@@ -1,21 +1,35 @@
+import { createAction } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // import jwt from 'jsonwebtoken'
 
 
+export const LocalStorageEventTarget = new EventTarget()
 
-export const getUserFromLS = localStorage.getItem("customer") ? JSON.parse(localStorage.getItem("customer")) : null
+export const getUserFromLS = () => localStorage.getItem("customer") ? JSON.parse(localStorage.getItem("customer")) : null
+export const getTokenLs = getUserFromLS();
+export const clearLSUser = () => {
+    if (!localStorage.getItem('customer')) {
+        return;
+    }
+    localStorage.removeItem("customer");
+    const clearLSEvent = new Event('clearLS')
+    return window.dispatchEvent(clearLSEvent);
+}
+
+
 
 export const userApi = createApi({
     reducerPath: "auth",
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5000/api",
         prepareHeaders: (headers) => {
-            const accessToken = getUserFromLS?.token;
+
+            const accessToken = getTokenLs?.token;
             headers.set('Authorization', `Bearer ${accessToken}`);
             return headers;
         },
         onQueryStarted: async (request, { dispatch }) => {
-            const accessToken = getUserFromLS?.token;
+            const accessToken = getTokenLs?.token;
 
             if (accessToken) {
                 //   const refreshToken = getRefreshToken();
@@ -50,6 +64,8 @@ export const userApi = createApi({
             throw error;
         },
     }),
+    // refetchOnFocus
+
     endpoints: (buider) => ({
         registerUser: buider.mutation({
             query(body) {
@@ -78,7 +94,7 @@ export const userApi = createApi({
                 return {
                     url: "user/wishlist",
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                        Authorization: `Bearer ${getTokenLs?.token}`,
                     },
                 }
             },
@@ -92,7 +108,7 @@ export const userApi = createApi({
                 return {
                     url: "user/cart",
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                        Authorization: `Bearer ${getTokenLs?.token}`,
                     },
                     method: "POST",
                     body: body
@@ -106,7 +122,7 @@ export const userApi = createApi({
                 return {
                     url: "user/cart",
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token}`,
+                        Authorization: `Bearer ${getTokenLs?.token}`,
                     }
                 }
             },
@@ -134,7 +150,7 @@ export const userApi = createApi({
                 return {
                     url: `user/delete-product-cart`,
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                        Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                     body: {
                         cartItemId
@@ -154,7 +170,7 @@ export const userApi = createApi({
                 return {
                     url: `user/update-product-cart/${cartItemId}/${newQuantity}`,
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                        Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                     method: "POST",
                     body: ""
@@ -172,7 +188,7 @@ export const userApi = createApi({
                 return {
                     url: `user/cart/create-order`,
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                        Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                     method: "POST",
                     body: body
@@ -187,7 +203,7 @@ export const userApi = createApi({
                 return {
                     url: `user/getmyorders`,
                     headers: {
-                        Authorization: `Bearer ${getUserFromLS?.token} `,
+                        Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                     method: "GET",
 
@@ -206,6 +222,7 @@ export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useCreateOrderByUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
+    useLogoutQuery,
     useDeleteUserAddToCartMutation,
     useUpdateQuantityUserAddToCartMutation
 } = userApi;

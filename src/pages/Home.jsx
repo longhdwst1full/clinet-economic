@@ -1,19 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Marquee from "react-fast-marquee";
-import BlogCard from "../components/BlogCard";
-import ProductCard from "../components/ProductCard";
+import BlogCard from "../components/BlogCard"; 
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import { useGetAllBlogsQuery } from "../features/blogs/blogSlice";
 import { useGetAllProductsQuery } from "../features/products/productSlice";
 import ProductItem from "../components/ProductItem";
-// import { services } from "../utils/Data";
-
+ 
 const Home = () => {
  
   const getAllProducts = useGetAllProductsQuery();
-  console.log(getAllProducts);
+ 
   const getAllBlogs = useGetAllBlogsQuery();
   return (
     <>

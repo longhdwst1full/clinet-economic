@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { getUserFromLS } from "../../features/user/userSlice";
 
 export default function UserSideNav() {
+  const user = getUserFromLS();
   return (
     <div>
       <div className="tw-flex tw-items-center tw-border-b tw-border-b-gray-200 tw-py-4">
@@ -15,7 +16,7 @@ export default function UserSideNav() {
         </Link>
         <div className="tw-flex-grow tw-pl-4">
           <div className="tw-mb-1 tw-truncate tw-font-semibold tw-text-gray-600">
-            {getUserFromLS?.email}
+            {user?.email}
           </div>
           <Link
             to=""
@@ -40,7 +41,7 @@ export default function UserSideNav() {
       </div>
       <div className="tw-mt-7">
         <NavLink
-          to="my-profile"
+          to="/user/my-profile"
           className={({ isActive }) =>
             classNames(
               "tw-flex tw-items-center tw-capitalize tw-transition-colors",
@@ -61,7 +62,7 @@ export default function UserSideNav() {
           Tài khoản của tôi
         </NavLink>
         <NavLink
-          to="/change-my-password"
+          to="/user/change-my-password"
           className={({ isActive }) =>
             classNames(
               "tw-mt-4 tw-flex tw-items-center tw-capitalize tw-transition-colors",
@@ -82,7 +83,7 @@ export default function UserSideNav() {
           Đổi mật khẩu
         </NavLink>
         <NavLink
-          to="/myorders"
+          to="/user/myorders"
           className={({ isActive }) =>
             classNames(
               "tw-mt-4 tw-flex tw-items-center tw-capitalize tw-transition-colors",

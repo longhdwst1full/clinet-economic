@@ -22,7 +22,7 @@ export default function Myorder() {
     <Link
       key={tab.status}
       to={{
-        pathname: "/",
+        pathname: "",
         search: createSearchParams({
           status: String(tab.status),
         }).toString(),

@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getUserFromLS } from "../user/userSlice";
 
-
-const token = getUserFromLS?.token
+const userLs= getUserFromLS();
+const token = userLs?.token
 export const blogApi = createApi({
     reducerPath: "blogs",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),

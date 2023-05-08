@@ -45,13 +45,12 @@ const Checkout = () => {
     [data]
   );
   // console.log(getUserFromLS);
-  const user = getUserFromLS;
+  const user = getUserFromLS();
   const {
     handleSubmit,
     formState: { errors },
     register,
     control,
-    
   } = useForm({
     defaultValues: {
       name: "",
@@ -64,13 +63,13 @@ const Checkout = () => {
     },
     resolver: yupResolver(schema),
   });
- 
+
   const processSubmit = async (dataresult) => {
     try {
       const productList = [];
 
       data &&
-        data.map(item => {
+        data.map((item) => {
           productList.push({
             product: item.productId._id,
             quantity: item.quantity,
@@ -92,9 +91,8 @@ const Checkout = () => {
           razorpayPaymentId: nanoid(),
         },
       };
-    
-      await orderFn(data1);
 
+      await orderFn(data1);
     } catch (error) {
       toast.error(error);
     }
@@ -111,7 +109,14 @@ const Checkout = () => {
     if (orderRes?.isError || deleteUserAddRep?.isError) {
       toast.error("error");
     }
-  }, [data, deleteUserAddRep?.isError, deleteUserAddToCarFN, navigate, orderRes?.isError, orderRes.isSuccess]);
+  }, [
+    data,
+    deleteUserAddRep?.isError,
+    deleteUserAddToCarFN,
+    navigate,
+    orderRes?.isError,
+    orderRes.isSuccess,
+  ]);
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
