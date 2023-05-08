@@ -46,7 +46,7 @@ a {
 .gap-30 {
   gap: 30px;
 }
-.error{
+.error {
   color: red;
   font-style: 12px;
 }
@@ -747,3 +747,6 @@ footer .input-group-text {
   color: var(--color-777777);
 }
 /* Shipping page ends here */
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */

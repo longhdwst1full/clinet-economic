@@ -29,6 +29,20 @@ export const productsApi = createApi({
                 }
             }
         }),
+        addRatingProducts: buider.mutation({
+            query(data) {
+                // console.log(id)
+                return {
+                    url: "product/rating",
+                    method: "PUT",
+                    body:data,
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+
+                }
+            }
+        }),
     })
 })
 

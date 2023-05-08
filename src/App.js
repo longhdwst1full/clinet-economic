@@ -23,6 +23,9 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OpenRoute from "./routings/OpenRoute";
 import PrivateRouter from "./routings/PrivateRouter";
+import Myorder from "./pages/user/Myorder";
+import MyProfile from "./pages/user/MyProfile";
+import LayoutUser from "./pages/user/Layout";
 function App() {
   return (
     <>
@@ -41,6 +44,24 @@ function App() {
                 <Cart />
               </PrivateRouter>
             } />
+
+
+            <Route path="/" element={
+              <PrivateRouter>
+                <LayoutUser />
+              </PrivateRouter>
+            }>
+              <Route path="myorders" element={
+
+                <Myorder />
+
+              } />
+              <Route path="my-profile" element={
+
+                <MyProfile />
+
+              } />
+            </Route>
             <Route path="checkout" element={<PrivateRouter>
               <Checkout />
             </PrivateRouter>} />
@@ -48,9 +69,10 @@ function App() {
             <Route path="wishlist" element={<PrivateRouter>
               <Wishlist />
             </PrivateRouter>} />
-            <Route path="login" element={<OpenRoute>
-              <Login />
-            </OpenRoute>} />
+            <Route path="login" element={
+              <OpenRoute>
+                <Login />
+              </OpenRoute>} />
             <Route path="forgot-password" element={<Forgotpassword />} />
             <Route path="signup" element={<OpenRoute>
               <Signup />

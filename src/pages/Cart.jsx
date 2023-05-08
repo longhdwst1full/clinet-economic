@@ -22,7 +22,7 @@ const Cart = () => {
 
   const hanleDeleteCart = async (id) => {
     try {
-      deleteUserAddToCarFN(id);
+    await  deleteUserAddToCarFN(id);
     } catch (error) {
       console.log(error);
     }
