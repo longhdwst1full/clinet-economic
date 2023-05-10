@@ -1,7 +1,5 @@
-import { createAction } from "@reduxjs/toolkit";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import jwt from 'jsonwebtoken'
 
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const LocalStorageEventTarget = new EventTarget()
 
@@ -17,56 +15,32 @@ export const clearLSUser = () => {
 }
 
 
-
 export const userApi = createApi({
     reducerPath: "auth",
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5000/api",
-        prepareHeaders: (headers) => {
 
-            const accessToken = getTokenLs?.token;
-            headers.set('Authorization', `Bearer ${accessToken}`);
+        prepareHeaders: (headers, { getState }) => {
+            const token = getUserFromLS();
+            if (token) {
+
+                headers.set("Authorization", `Bearer ${token.token}`);
+            }
             return headers;
         },
-        onQueryStarted: async (request, { dispatch }) => {
-            const accessToken = getTokenLs?.token;
-
-            if (accessToken) {
-                //   const refreshToken = getRefreshToken();
-
-                //   try {
-                //     const result = await dispatch(refreshToken());
-                //     setAccessToken(result.payload.accessToken);
-                //     setRefreshToken(result.payload.refreshToken);
-                //   } catch (error) {
-                //     console.error(error);
-                //   }
-            }
-        },
-        onQueryError: async (error, query, retries) => {
-            const { statusCode } = error.response;
-
-            if (statusCode === 401 || statusCode === 403) {
-                //   const refreshToken = getRefreshToken();
-
-                //   try {
-                //     const result = await query.dispatch(refreshToken());
-                //     // setAccessToken(result.payload.accessToken);
-                //     // setRefreshToken(result.payload.refreshToken);
-                //     console.log(result)
-                //     // Retry the failed request with the updated access token
-                //     return query.retry();
-                //   } catch (error) {
-                //     console.error(error);
-                //   }
-            }
-
-            throw error;
-        },
     }),
-    // refetchOnFocus
+
 
     endpoints: (buider) => ({
+
+        refreshAccessToken: buider.mutation({
+            query: (refreshToken) => ({
+                url: '/refresh',
+                method: 'POST',
+                body: { refreshToken },
+            }),
+        }),
+
         registerUser: buider.mutation({
             query(body) {
                 return {
@@ -98,17 +72,15 @@ export const userApi = createApi({
                     },
                 }
             },
-
-
-
         }),
 
         addToCart: buider.mutation({
             query(body) {
+                const token = getUserFromLS()
                 return {
                     url: "user/cart",
                     headers: {
-                        Authorization: `Bearer ${getTokenLs?.token}`,
+                        Authorization: `Bearer ${token?.token}`,
                     },
                     method: "POST",
                     body: body
@@ -129,7 +101,7 @@ export const userApi = createApi({
             providesTags(result) {
 
                 if (result) {
-
+                    console.log(result)
                     const final = [
                         ...result.map((item) => {
 
@@ -211,8 +183,10 @@ export const userApi = createApi({
                 }
             }
 
-        })
-    })
+        }),
+
+    }),
+
 })
 
 console.log(userApi)
@@ -222,7 +196,7 @@ export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useCreateOrderByUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
-    useLogoutQuery,
+    useRefreshAccessTokenMutation,
     useDeleteUserAddToCartMutation,
     useUpdateQuantityUserAddToCartMutation
 } = userApi;

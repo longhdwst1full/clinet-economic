@@ -41,9 +41,9 @@ const SingleProduct = () => {
   const sizeProducts = ["S", "M", "L", "XL", "XXL"];
   const [orderedProduct, setorderedProduct] = useState(true);
   const [addToCartFn, addToCartRep] = useAddToCartMutation();
-  // console.log(addToCartFn);
+   
   const copyToClipboard = (text) => {
-    // console.log("text", text);
+    
     const textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);
@@ -66,11 +66,11 @@ const SingleProduct = () => {
       price: productItems?.data?.price,
       quantity: quantity,
     });
-    console.log(id);
+    
   };
   useEffect(() => {
     const { data } = cartListUserState;
-    console.log("data", data);
+    // console.log("data", data);
     for (let i = 0; i < data?.length; i++) {
       if (id === data[i]?.productId?._id) {
         setAlreadyAddProduct(true);
