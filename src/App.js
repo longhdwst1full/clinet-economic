@@ -7,7 +7,6 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import OurStore from "./pages/OurStore";
 import Blog from "./pages/Blog";
 import CompareProduct from "./pages/CompareProduct";
 import Wishlist from "./pages/Wishlist";
@@ -30,6 +29,7 @@ import MyProfile from "./pages/user/MyProfile";
 import LayoutUser from "./pages/user/Layout";
 import ChangePassword from "./pages/user/ChangePassword";
 import { LocalStorageEventTarget, clearLSUser, getTokenLs } from "./features/user/userSlice";
+import OurStore from "./pages/ProductList/OurStore";
 
 function App() {
   useEffect(() => {

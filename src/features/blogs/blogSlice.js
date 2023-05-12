@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getUserFromLS } from "../user/userSlice";
 
-const userLs= getUserFromLS();
+const userLs = getUserFromLS();
 const token = userLs?.token
 export const blogApi = createApi({
     reducerPath: "blogs",
@@ -17,7 +17,7 @@ export const blogApi = createApi({
         }),
         likeBlog: buider.mutation({
             query(id) {
-                console.log(id)
+
                 return {
                     url: "blog/likes",
                     method: "PUT",
@@ -32,7 +32,7 @@ export const blogApi = createApi({
         }),
         dislikesBlog: buider.mutation({
             query(id) {
-                console.log(id)
+
                 return {
                     url: "blog/dislikes",
                     method: "PUT",
@@ -44,11 +44,11 @@ export const blogApi = createApi({
                 }
             },
 
-        }),
+        })
     })
 })
 
-// console.log(blogApi)
+
 export const { useLikeBlogMutation,
     useGetOneBlogQuery,
     useGetAllBlogsQuery,

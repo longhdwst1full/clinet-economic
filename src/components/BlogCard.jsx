@@ -14,7 +14,7 @@ const BlogCard = ({ data }) => {
         <h5 className="title">{data?.title}</h5>
         <p className="desc flex-shrink-1 flex-grow-1 " dangerouslySetInnerHTML={{
           __html
-            : (data?.description.substr(0, 100) + "...")
+            : (data?.description?.substr(0, 100) + "...")
         }}>
 
         </p>

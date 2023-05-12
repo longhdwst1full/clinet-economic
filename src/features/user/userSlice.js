@@ -101,7 +101,7 @@ export const userApi = createApi({
             providesTags(result) {
 
                 if (result) {
-                    console.log(result)
+                    // console.log(result)
                     const final = [
                         ...result.map((item) => {
 

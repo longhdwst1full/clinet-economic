@@ -1,15 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getUserFromLS } from "../user/userSlice";
 
-const userLs= getUserFromLS();
+const userLs = getUserFromLS();
 const token = userLs?.token
- 
+
 export const productsApi = createApi({
     reducerPath: "products",
     baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
     endpoints: (buider) => ({
         getAllProducts: buider.query({
-            query: () => "product",
+            query: (queryconfi) => `product?${queryconfi}`
+
         }),
 
         getOneProduct: buider.query({
@@ -18,7 +19,7 @@ export const productsApi = createApi({
         }),
         addToWishList: buider.mutation({
             query(id) {
-               
+
                 return {
                     url: "product/wishlist",
                     method: "PUT",
@@ -32,11 +33,11 @@ export const productsApi = createApi({
         }),
         addRatingProducts: buider.mutation({
             query(data) {
-               
+
                 return {
                     url: "product/rating",
                     method: "PUT",
-                    body:data,
+                    body: data,
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -47,5 +48,5 @@ export const productsApi = createApi({
     })
 })
 
-console.log(productsApi)
+// console.log(productsApi)
 export const { useGetOneProductQuery, useAddToWishListMutation, useGetAllProductsQuery } = productsApi;
