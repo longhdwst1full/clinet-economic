@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
-import Container from "../components/Container";
+import BreadCrumb from "../../components/BreadCrumb";
+import Meta from "../../components/Meta";
+import Container from "../../components/Container";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useLoginUserMutation } from "../features/user/userSlice";
-import CustomInputForWorkRef from "../components/CustomInputForwrokRef";
+import { useLoginUserMutation } from "../../features/user/userSlice";
+import CustomInputForWorkRef from "../../components/CustomInputForwrokRef";
 
 const validateForm = Yup.object({
   email: Yup.string().email().required(),
@@ -19,7 +19,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginFn, loginRes] = useLoginUserMutation();
   const { isError, isSuccess, isLoading } = loginRes;
- 
+
   const { handleSubmit, setError, control } = useForm({
     defaultValues: {
       email: "",

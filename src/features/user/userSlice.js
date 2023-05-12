@@ -99,11 +99,11 @@ export const userApi = createApi({
                 }
             },
             providesTags(result) {
-
+                // if (!result) return false
                 if (result) {
                     // console.log(result)
                     const final = [
-                        ...result.map((item) => {
+                        ...result?.map((item) => {
 
                             return ({ type: 'CartUser', id: item._id })
                         }
@@ -184,6 +184,49 @@ export const userApi = createApi({
             }
 
         }),
+        forgotPassword: buider.mutation({
+            query: (data) => {
+                return {
+                    url: `user/forgot-password-token`,
+                    method: "POST",
+                    body: data
+                }
+            }
+
+        }),
+        forgotPasswordReset: buider.mutation({
+            query: (data, token) => {
+                return {
+                    url: `user/reset-password/${token}`,
+                    method: "POST",
+                    body: data
+                }
+            }
+
+        }),
+        updatePassword: buider.mutation({
+            query: (data) => {
+                return {
+                    url: `user/changepassword`,
+                    method: "PUT",
+                    body: data
+                }
+            }
+
+        }),
+        getProdfile: buider.query({
+            query: (id) => `user/profile/${id}`
+        }),
+        updateProfile: buider.mutation({
+            query: (data) => {
+                return {
+                    url: `user/edit-user`,
+                    method: "PUT",
+                    body: data
+                }
+            }
+
+        }),
 
     }),
 
@@ -192,11 +235,16 @@ export const userApi = createApi({
 console.log(userApi)
 export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useGetUserAddToCartQuery,
+    useGetProdfileQuery,
     useGetUserOrdersQuery,
     useCreateOrderByUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
     useRefreshAccessTokenMutation,
+    useForgotPasswordResetMutation,
+    useForgotPasswordMutation,
+    useUpdateProfileMutation,
+    useUpdatePasswordMutation,
     useDeleteUserAddToCartMutation,
     useUpdateQuantityUserAddToCartMutation
 } = userApi;

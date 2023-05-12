@@ -2,20 +2,20 @@ import axios from "axios";
 import React, { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
-import watch from "../images/watch.jpg";
-import Container from "../components/Container";
+import watch from "../../images/watch.jpg";
+import Container from "../../components/Container";
 import {
   getUserFromLS,
   useAddToCartMutation,
   useDeleteUserAddToCartMutation,
   useGetUserAddToCartQuery,
-} from "../features/user/userSlice";
+} from "../../features/user/userSlice";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import CustomInputForWorkRef from "../components/CustomInputForwrokRef";
-import { useCreateOrderByUserMutation } from "../features/user/userSlice";
+import CustomInputForWorkRef from "../../components/CustomInputForwrokRef";
+import { useCreateOrderByUserMutation } from "../../features/user/userSlice";
 import { nanoid } from "@reduxjs/toolkit";
 
 const schema = yup.object({

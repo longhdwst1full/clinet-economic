@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo } from "react";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
+import BreadCrumb from "../../components/BreadCrumb";
+import Meta from "../../components/Meta";
 import { AiFillDelete } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import Container from "../components/Container";
+import Container from "../../components/Container";
 import { toast } from "react-toastify";
 import {
   useDeleteUserAddToCartMutation,
   useGetUserAddToCartQuery,
   useUpdateQuantityUserAddToCartMutation,
-} from "../features/user/userSlice";
+} from "../../features/user/userSlice";
 
 const Cart = () => {
   const { data } = useGetUserAddToCartQuery();

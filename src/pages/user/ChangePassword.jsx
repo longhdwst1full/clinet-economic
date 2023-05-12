@@ -3,14 +3,20 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import CustomInputForWorkRef from "../../components/CustomInputForwrokRef";
 import * as Yup from "yup";
+import { useUpdatePasswordMutation } from "../../features/user/userSlice";
+import { useEffect } from "react";
 
 const validateForm = Yup.object({
-  confirm_password: Yup.string().required(),
+  confirm_password: Yup.string()
+    .required()
+    .oneOf([Yup.ref("new_password")]),
   password: Yup.string().required(),
   new_password: Yup.string().required(),
 });
 export default function ChangePassword() {
-  const { control, handleSubmit, setError } = useForm({
+  const [resetfn, resetrs] = useUpdatePasswordMutation();
+  const { data, isError, isSuccess } = resetrs;
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       password: "",
       confirm_password: "",
@@ -21,10 +27,25 @@ export default function ChangePassword() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
-    } catch (error) {}
+      await resetfn({
+        password: data.new_password,
+        password_old: data.password,
+      });
+    } catch (error) {
+      toast.error(error);
+    }
   });
 
+  useEffect(() => {
+    if (data && isSuccess) {
+      toast.success("Update success");
+    }
+    if (resetrs && isError) {
+      if (resetrs.error?.status === 500) {
+        toast.error(resetrs.error.data.message);
+      }
+    }
+  }, [resetrs, isSuccess, isError, data]);
   return (
     <div className="tw-rounded-sm tw-bg-white tw-px-2 tw-pb-10 tw-shadow md:tw-px-7 md:tw-pb-20">
       <div className="tw-border-b tw-border-b-gray-200 tw-py-6">

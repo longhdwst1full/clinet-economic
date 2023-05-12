@@ -7,21 +7,21 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Blog from "./pages/Blog";
+import Blog from "./pages/Blog/Blog";
 import CompareProduct from "./pages/CompareProduct";
-import Wishlist from "./pages/Wishlist";
-import Login from "./pages/Login";
-import Forgotpassword from "./pages/Forgotpassword";
-import Signup from "./pages/Signup";
-import Resetpassword from "./pages/Resetpassword";
-import SingleBlog from "./pages/SingleBlog";
+import Wishlist from "./pages/ProductList/Wishlist";
+import Login from "./pages/Auth/Login";
+import Forgotpassword from "./pages/Auth/Forgotpassword";
+import Signup from "./pages/Auth/Signup";
+import Resetpassword from "./pages/Auth/Resetpassword";
+import SingleBlog from "./pages/Blog/SingleBlog";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPloicy from "./pages/RefundPloicy";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import TermAndContions from "./pages/TermAndContions";
-import SingleProduct from "./pages/SingleProduct";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
+import SingleProduct from "./pages/ProductList/SingleProduct";
+import Cart from "./pages/Cart/Cart";
+import Checkout from "./pages/ProductList/Checkout";
 import OpenRoute from "./routings/OpenRoute";
 import PrivateRouter from "./routings/PrivateRouter";
 import Myorder from "./pages/user/Myorder";
@@ -91,7 +91,7 @@ function App() {
             <Route path="signup" element={<OpenRoute>
               <Signup />
             </OpenRoute>} />
-            <Route path="reset-password" element={<Resetpassword />} />
+            <Route path="reset-password/:token" element={<Resetpassword />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="refund-policy" element={<RefundPloicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />

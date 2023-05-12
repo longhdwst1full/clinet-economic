@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import BreadCrumb from "../components/BreadCrumb";
+import BreadCrumb from "../../components/BreadCrumb";
 import { HiOutlineArrowLeft } from "react-icons/hi";
-import Meta from "../components/Meta";
-import blog from "../images/blog-1.jpg";
-import Container from "../components/Container";
+import Meta from "../../components/Meta";
+import blog from "../../images/blog-1.jpg";
+import Container from "../../components/Container";
 
-import { useGetOneBlogQuery } from "../features/blogs/blogSlice";
+import { useGetOneBlogQuery } from "../../features/blogs/blogSlice";
 
 const SingleBlog = () => {
   const { id } = useParams();

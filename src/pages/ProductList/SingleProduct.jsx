@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
-import ProductCard from "../components/ProductCard";
+import BreadCrumb from "../../components/BreadCrumb";
+import Meta from "../../components/Meta";
+import ProductCard from "../../components/ProductCard";
 import ReactImageZoom from "react-image-zoom";
-import Color from "../components/Color";
+import Color from "../../components/Color";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
 import { Link, useParams } from "react-router-dom";
-import watch from "../images/watch.jpg";
-import Container from "../components/Container";
+import watch from "../../images/watch.jpg";
+import Container from "../../components/Container";
 import {
   useAddToWishListMutation,
   useGetOneProductQuery,
-} from "../features/products/productSlice";
+} from "../../features/products/productSlice";
 import { toast } from "react-toastify";
 import {
   useAddToCartMutation,
   useGetUserAddToCartQuery,
-} from "../features/user/userSlice";
+} from "../../features/user/userSlice";
 
 const SingleProduct = () => {
   const { id } = useParams();
@@ -41,9 +41,8 @@ const SingleProduct = () => {
   const sizeProducts = ["S", "M", "L", "XL", "XXL"];
   const [orderedProduct, setorderedProduct] = useState(true);
   const [addToCartFn, addToCartRep] = useAddToCartMutation();
-   
+
   const copyToClipboard = (text) => {
-    
     const textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);
@@ -66,7 +65,6 @@ const SingleProduct = () => {
       price: productItems?.data?.price,
       quantity: quantity,
     });
-    
   };
   useEffect(() => {
     const { data } = cartListUserState;

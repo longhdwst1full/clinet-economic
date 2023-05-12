@@ -10,7 +10,7 @@ import ProductItem from "../components/ProductItem";
  
 const Home = () => {
  
-  const getAllProducts = useGetAllProductsQuery();
+  const  { data, isLoading } = useGetAllProductsQuery();
  
   const getAllBlogs = useGetAllBlogsQuery();
   return (
@@ -182,8 +182,8 @@ const Home = () => {
           <div className="col-12">
             <h3 className="section-heading">Featured Collection</h3>
           </div>
-          {getAllProducts?.data &&
-            getAllProducts.data.map((item) => {
+          {data?.data &&
+            data?.data?.map((item) => {
               if (item.tags === "featured") {
                 return <SpecialProduct key={item._id} product={item} />;
               }
@@ -264,8 +264,8 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          {getAllProducts?.data &&
-            getAllProducts.data.map((item) => {
+          {data &&
+            data.data.map((item) => {
               // if (item.tags === "special") {
               return <SpecialProduct key={item._id} data={item} />;
               // }
@@ -279,8 +279,8 @@ const Home = () => {
           </div>
         </div>
         <div className="row">
-          {getAllProducts?.data &&
-            getAllProducts.data.map((item) => {
+          {data &&
+            data.data.map((item) => {
               // if (item.tags === "popular") {
               return <ProductItem key={item._id} product={item} />;
               // }

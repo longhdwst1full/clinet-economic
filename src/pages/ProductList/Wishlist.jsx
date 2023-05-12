@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
-import Container from "../components/Container";
-import { useGetUserProductsWithListQuery } from "../features/user/userSlice";
-import { useAddToWishListMutation } from "../features/products/productSlice";
+import BreadCrumb from "../../components/BreadCrumb";
+import Meta from "../../components/Meta";
+import Container from "../../components/Container";
+import { useGetUserProductsWithListQuery } from "../../features/user/userSlice";
+import { useAddToWishListMutation } from "../../features/products/productSlice";
 
 const Wishlist = () => {
   const getWishList = useGetUserProductsWithListQuery();
