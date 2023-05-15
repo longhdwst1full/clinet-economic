@@ -74,7 +74,7 @@ export const userApi = createApi({
             },
         }),
         getUserAddToCart: buider.query({
-            query() { 
+            query() {
                 return {
                     url: "user/cart",
                     headers: {
@@ -181,6 +181,7 @@ export const userApi = createApi({
             }
 
         }),
+
         forgotPassword: buider.mutation({
             query: (data) => {
                 return {
@@ -191,6 +192,7 @@ export const userApi = createApi({
             }
 
         }),
+
         forgotPasswordReset: buider.mutation({
             query: (data, token) => {
                 return {
@@ -201,6 +203,7 @@ export const userApi = createApi({
             }
 
         }),
+
         updatePassword: buider.mutation({
             query: (data) => {
                 return {
@@ -211,9 +214,9 @@ export const userApi = createApi({
             }
 
         }),
+
         getProdfile: buider.query({
             query: () => {
-
                 return {
                     url: `user/profile`,
                     method: "GET",
@@ -221,8 +224,24 @@ export const userApi = createApi({
                         Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                 }
+            },
+            providesTags(result) {
+                if (result && Array.isArray(result)) {
+
+                    const final = [
+                        ...result?.map((item) => {
+                            return ({ type: 'profileUser', id: item._id })
+                        }
+                        ),
+                        { type: 'profileUser', id: 'User' }
+                    ]
+                    return final
+                }
+
+                return [{ type: 'profileUser', id: 'User' }]
             }
         }),
+
         updateProfile: buider.mutation({
             query: (data) => {
                 return {
@@ -233,9 +252,11 @@ export const userApi = createApi({
                         Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                 }
-            }
+            },
+            invalidatesTags: (result, error, body) => [{ type: 'profileUser', id: 'User' }]
 
         }),
+
         saveUseraddress: buider.mutation({
             query: (data) => {
                 return {
@@ -249,6 +270,7 @@ export const userApi = createApi({
             }
 
         }),
+
         updateAvatar: buider.mutation({
             query: (data) => {
                 return {
@@ -259,8 +281,8 @@ export const userApi = createApi({
                         Authorization: `Bearer ${getTokenLs?.token} `,
                     },
                 }
-            }
-
+            },
+            invalidatesTags: (result, error, body) => [{ type: 'profileUser', id: 'User' }]
         }),
 
     }),

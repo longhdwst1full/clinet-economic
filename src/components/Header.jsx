@@ -141,11 +141,13 @@ const Header = () => {
                       to="/user/my-profile"
                       className="d-flex align-items-center gap-10 text-white"
                     >
-                      <img src={user} alt="user" />
+                      <img className="tw-block tw-object-cover tw-h-[36px] tw-w-[36px] tw-rounded-full"
+                        src={userLs.avatar ? userLs.avatar : user}
+                        alt="user"
+                      />
 
-                      <p className="mb-0 d-flex flex-column align-items-center">
-                        {userLs?.name}
-                        {userLs?.email}
+                      <p className="mb-0 tw-flex flex-column align-items-center tw-justify-start tw-text-left">
+                        {userLs.email ? userLs?.email : userLs?.name}
                       </p>
                     </Link>
                   </Popover>

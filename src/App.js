@@ -72,6 +72,9 @@ function App() {
               <Route path="my-profile" element={
                 <MyProfile />
               } />
+              <Route path="my-profile/edit" element={
+                <MyProfile />
+              } />
               <Route path="change-my-password" element={
                 <ChangePassword />
               } />

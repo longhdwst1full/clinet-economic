@@ -1,134 +1,100 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import BreadCrumb from "../../components/BreadCrumb";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CustomInputForWorkRef from "../../components/CustomInputForwrokRef";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import {
+  getUserFromLS,
   useGetProdfileQuery,
+  useUpdateAvatarMutation,
   useUpdateProfileMutation,
 } from "../../features/user/userSlice";
+import * as Yup from "yup";
+import InputFile from "../../components/InputFile";
+import { useMatch } from "react-router-dom";
 
-function Info() {
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = useFormContext();
+const profileSchema = Yup.object({
+  name: Yup.string().required("Bạn không được để trống"),
 
-  return (
-    <Fragment>
-      <div className="tw-mt-6 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
-        <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
-          Tên
-        </div>
-        <div className="sm:tw-w-[80%] sm:tw-pl-5">
-          <CustomInputForWorkRef
-            register={register}
-            name="name"
-            onChange={(e) => e.target.value}
-            control={control}
-            placeholder="Tên"
-          />
-        </div>
-      </div>
-      <div className="tw-mt-2 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
-        <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
-          Số điện thoại
-        </div>
-        <div className="sm:tw-w-[80%] sm:tw-pl-5">
-          <Controller
-            control={control}
-            name="phone"
-            render={({ field }) => (
-              <CustomInputForWorkRef
-                placeholder="Số điện thoại"
-                errorMessage={errors.phone?.message}
-                {...field}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </div>
-      </div>
-    </Fragment>
-  );
-}
+  mobile: Yup.string().required("Bạn không được để trống"),
+  address: Yup.string().required("Bạn không được để trống"),
+});
+
 export default function MyProfile() {
   const [file, setFile] = useState();
-
+  // const pageProfile = useMatch("user/my-profile");
+  // const isPageEditUser = Boolean(pageProfile);
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : "";
   }, [file]);
 
-  const { data: profileData } = useGetProdfileQuery();
-  const profile = profileData?.data.data;
-  const updateProfileMutation = useUpdateProfileMutation();
-  const uploadAvatarMutaion = useMutation(userApi.uploadAvatar);
-  const methods = useForm({
+  const { data: profile } = useGetProdfileQuery();
+  const userLS = getUserFromLS();
+  useMemo(() => {
+    localStorage.setItem("customer", JSON.stringify({ ...userLS, ...profile }));
+  }, [userLS, profile]);
+
+  const [updateProfileMutationFN, updateUserRes] = useUpdateProfileMutation();
+
+  const [uploadAvatarMutaionFn, uploadAvatarRes] = useUpdateAvatarMutation();
+
+  const { handleSubmit, control, reset, setValue, watch } = useForm({
     defaultValues: {
       name: "",
-      phone: "",
+      mobile: "",
       address: "",
-      avatar: "",
-      date_of_birth: new Date(1990, 0, 1),
     },
     resolver: yupResolver(profileSchema),
   });
-  const {
-    register,
-    control,
-    formState: { errors },
-    handleSubmit,
-    setValue,
-    watch,
-    setError,
-  } = methods;
 
   const avatar = watch("avatar");
 
   useEffect(() => {
+    reset();
     if (profile) {
       setValue("name", profile.name);
-      setValue("phone", profile.phone);
+      setValue("mobile", profile.mobile);
       setValue("address", profile.address);
-      setValue("avatar", profile.avatar);
-      setValue(
-        "date_of_birth",
-        profile.date_of_birth
-          ? new Date(profile.date_of_birth)
-          : new Date(1990, 0, 1)
-      );
+      setValue("avatar", profile?.avatar ? profile.avatar[0].url : "");
     }
-  }, [profile, setValue]);
+  }, [profile, reset, setValue]);
 
-  const onSubmit = handleSubmit(async (data) => {
+  const processOnSubmit = handleSubmit(async (data) => {
     try {
       let avatarName = avatar;
       if (file) {
         const form = new FormData();
-        form.append("image", file);
-        const uploadRes = await uploadAvatarMutaion.mutateAsync(form);
-        avatarName = uploadRes.data.data;
-        setValue("avatar", avatarName);
+        form.append("images", file);
+        await uploadAvatarMutaionFn(form);
       }
-
-      const res = await updateProfileMutation.mutateAsync({
+      if (uploadAvatarRes?.data) {
+        avatarName = uploadAvatarRes?.data[0].url;
+      }
+      console.log("form data", data);
+      await updateProfileMutationFN({
         ...data,
-        date_of_birth: data.date_of_birth?.toISOString(),
         avatar: avatarName,
       });
-      setProfile(res.data.data);
-      setProfileToLS(res.data.data);
-
-      toast.success(res.data.message);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+      toast.error(error);
+    }
   });
+
+  useEffect(() => {
+    if (updateUserRes.isSuccess) {
+      toast.success("Cập nhập tài khoản thành công");
+    }
+    if (!updateUserRes.isError) {
+      toast.error("SĐT Đã chùng với ai đó ");
+    }
+  }, [updateUserRes.isError, updateUserRes.isSuccess]);
+  useEffect(() => {
+    if (uploadAvatarRes.data) {
+      setValue("avatar", uploadAvatarRes.data[0].url);
+    }
+  }, [setValue, uploadAvatarRes.data]);
 
   const handleChangeFile = (file) => {
     setFile(file);
@@ -146,75 +112,99 @@ export default function MyProfile() {
             Quản lý thông tin hồ sơ để bảo mật tài khoản
           </div>
         </div>
-        <FormProvider {...methods}>
-          <form
-            className="tw-mt-8 tw-flex tw-flex-col-reverse md:tw-flex-row md:tw-items-start"
-            onSubmit={onSubmit}
-          >
-            <div className="tw-mt-6 tw-flex-grow md:tw-mt-0 md:tw-pr-12">
-              <div className="tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
-                <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
-                  Email
-                </div>
-                <div className="sm:tw-w-[80%] sm:pl-5">
-                  <div className="tw-pt-3 tw-text-gray-700">
-                    {profile?.email}
-                  </div>
-                </div>
-              </div>
-              <Info />
-              <div className="tw-mt-2 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
-                <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
-                  Địa chỉ
-                </div>
-                <div className="sm:tw-w-[80%] sm:pl-5">
-                  <CustomInputForWorkRef
-                    onChange={(e) => e.target.value}
-                    control={control}
-                    name="address"
-                    placeholder="Địa chỉ"
-                  />
-                </div>
-              </div>
-              <Controller
-                control={control}
-                name="date_of_birth"
-                render={({ field }) => (
-                  <DateSelect
-                    errorMessage={errors.date_of_birth?.message}
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              <div className="tw-mt-2 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
-                <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right" />
-                <div className="sm:tw-w-[80%] sm:tw-pl-5">
-                  <button className="btn" type="submit">
-                    Lưu
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="tw-flex tw-justify-center md:tw-w-72 md:tw-border-l md:tw-border-l-gray-200">
-              <div className="tw-flex tw-flex-col tw-items-center">
-                <div className="tw-my-5 tw-h-24 tw-w-24">
-                  <img
-                    src={previewImage || getAvatarUrl(avatar)}
-                    alt=""
-                    className="tw-h-full tw-w-full tw-rounded-full tw-object-cover"
-                  />
-                </div>
-                <InputFile onChange={handleChangeFile} />
 
-                <div className="tw-mt-3 tw-text-gray-400">
-                  <div>Dụng lượng file tối đa 1 MB</div>
-                  <div>Định dạng:.JPEG, .PNG</div>
+        <form
+          className="tw-mt-8 tw-flex tw-flex-col-reverse md:tw-flex-row md:tw-items-start"
+          onSubmit={processOnSubmit}
+        >
+          <div className="tw-mt-6 tw-flex-grow md:tw-mt-0 md:tw-pr-12">
+            <div className="tw-flex tw-flex-col tw-flex-wrap tw-items-center sm:tw-flex-row">
+              <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
+                Email
+              </div>
+              <div className="sm:tw-w-[80%] sm:tw-pl-5">
+                <div className="tw-pt-3 tw-text-gray-700 tw-text-base">
+                  {profile?.email}
                 </div>
               </div>
             </div>
-          </form>
-        </FormProvider>
+
+            <div className="tw-mt-6 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
+              <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
+                Tên
+              </div>
+              <div className="sm:tw-w-[80%] sm:tw-pl-5">
+                <CustomInputForWorkRef
+                  name="name"
+                  type="text"
+                  onChange={(e) => e.target.value}
+                  control={control}
+                  placeholder="Tên"
+                />
+              </div>
+            </div>
+            <div className="tw-mt-2 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
+              <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
+                Số điện thoại
+              </div>
+              <div className="sm:tw-w-[80%] sm:tw-pl-5">
+                <CustomInputForWorkRef
+                  placeholder="Số điện thoại"
+                  name="mobile"
+                  type="text"
+                  onChange={(e) => e.target.value}
+                  control={control}
+                />
+              </div>
+            </div>
+
+            <div className="tw-mt-6 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
+              <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right">
+                Địa chỉ
+              </div>
+              <div className="sm:tw-w-[80%] sm:tw-pl-5">
+                <CustomInputForWorkRef
+                  placeholder="Địa chỉ"
+                  name="address"
+                  type="text"
+                  onChange={(e) => e.target.value}
+                  control={control}
+                />
+              </div>
+            </div>
+
+            <div className="tw-mt-2 tw-flex tw-flex-col tw-flex-wrap sm:tw-flex-row">
+              <div className="tw-truncate tw-pt-3 tw-capitalize sm:tw-w-[20%] sm:tw-text-right" />
+              <div className="sm:tw-w-[80%] sm:tw-pl-5">
+                <button
+                  className={`button tw-mt-2 ${
+                    updateUserRes.isLoading ? " tw-cursor-not-allowed" : " "
+                  }`}
+                  type="submit"
+                >
+                  Lưu
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="tw-flex tw-justify-center md:tw-w-72 md:tw-border-l md:tw-border-l-gray-200">
+            <div className="tw-flex tw-flex-col tw-items-center">
+              <div className="tw-my-5 tw-h-24 tw-w-24">
+                <img
+                  src={previewImage}
+                  alt=""
+                  className="tw-h-full tw-w-full tw-rounded-full tw-object-cover"
+                />
+              </div>
+              <InputFile onChange={handleChangeFile} />
+
+              <div className="tw-mt-3 tw-text-gray-400">
+                <div>Dụng lượng file tối đa 1 MB</div>
+                <div>Định dạng:.JPEG, .PNG</div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

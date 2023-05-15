@@ -2,7 +2,7 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import classNames from "classnames";
 import { getUserFromLS } from "../../features/user/userSlice";
-
+import {FiUser} from "react-icons/fi"
 export default function UserSideNav() {
   const user = getUserFromLS();
   return (
@@ -12,14 +12,18 @@ export default function UserSideNav() {
           to=""
           className="tw-h-12 tw-w-12 tw-flex-shrink-0 tw-overflow-hidden tw-rounded-full tw-border tw-border-black/10"
         >
-          <img src="" alt="" className="tw-h-full tw-w-full tw-object-cover" />
+          <img
+            src={user && user.avatar ? user.avatar : <FiUser/>}
+            alt=""
+            className="tw-h-full tw-w-full tw-object-cover"
+          />
         </Link>
         <div className="tw-flex-grow tw-pl-4">
           <div className="tw-mb-1 tw-truncate tw-font-semibold tw-text-gray-600">
             {user?.email}
           </div>
           <Link
-            to=""
+            to="my-profile/edit"
             className="tw-flex tw-items-center tw-capitalize tw-text-gray-500"
           >
             <svg
