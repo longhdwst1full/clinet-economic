@@ -20,14 +20,14 @@ export const userApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5000/api",
 
-        prepareHeaders: (headers, { getState }) => {
-            const token = getUserFromLS();
-            if (token) {
+        // prepareHeaders: (headers, { getState }) => {
+        //     const token = getUserFromLS();
+        //     if (token) {
 
-                headers.set("Authorization", `Bearer ${token.token}`);
-            }
-            return headers;
-        },
+        //         headers.set("Authorization", `Bearer ${token.token}`);
+        //     }
+        //     return headers;
+        // },
     }),
 
 
@@ -73,7 +73,31 @@ export const userApi = createApi({
                 }
             },
         }),
+        getUserAddToCart: buider.query({
+            query() { 
+                return {
+                    url: "user/cart",
+                    headers: {
+                        Authorization: `Bearer ${getTokenLs?.token}`,
+                    }
+                }
+            },
+            providesTags(result) {
+                if (result && Array.isArray(result)) {
 
+                    const final = [
+                        ...result?.map((item) => {
+                            return ({ type: 'CartUser', id: item._id })
+                        }
+                        ),
+                        { type: 'CartUser', id: 'LIST' }
+                    ]
+                    return final
+                }
+
+                return [{ type: 'CartUser', id: 'LIST' }]
+            }
+        }),
         addToCart: buider.mutation({
             query(body) {
                 const token = getUserFromLS()
@@ -89,33 +113,7 @@ export const userApi = createApi({
             invalidatesTags: (result, error, body) => [{ type: 'CartUser', id: 'LIST' }]
         }),
 
-        getUserAddToCart: buider.query({
-            query() {
-                return {
-                    url: "user/cart",
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token}`,
-                    }
-                }
-            },
-            providesTags(result) {
-                // if (!result) return false
-                if (result) {
-                    // console.log(result)
-                    const final = [
-                        ...result?.map((item) => {
 
-                            return ({ type: 'CartUser', id: item._id })
-                        }
-                        ),
-                        { type: 'CartUser', id: 'LIST' }
-                    ]
-                    return final
-                }
-
-                return [{ type: 'CartUser', id: 'LIST' }]
-            }
-        }),
 
         deleteUserAddToCart: buider.mutation({
             query(cartItemId) {
@@ -150,7 +148,6 @@ export const userApi = createApi({
                 }
             },
             invalidatesTags: (result, error, id) => {
-
                 return [{ type: 'CartUser', id: id.cartItemId }]
             }
         }),
@@ -215,14 +212,52 @@ export const userApi = createApi({
 
         }),
         getProdfile: buider.query({
-            query: (id) => `user/profile/${id}`
+            query: () => {
+
+                return {
+                    url: `user/profile`,
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${getTokenLs?.token} `,
+                    },
+                }
+            }
         }),
         updateProfile: buider.mutation({
             query: (data) => {
                 return {
                     url: `user/edit-user`,
                     method: "PUT",
-                    body: data
+                    body: data,
+                    headers: {
+                        Authorization: `Bearer ${getTokenLs?.token} `,
+                    },
+                }
+            }
+
+        }),
+        saveUseraddress: buider.mutation({
+            query: (data) => {
+                return {
+                    url: `user/save-address`,
+                    method: "PUT",
+                    body: data,
+                    headers: {
+                        Authorization: `Bearer ${getTokenLs?.token} `,
+                    },
+                }
+            }
+
+        }),
+        updateAvatar: buider.mutation({
+            query: (data) => {
+                return {
+                    url: `user/avatar`,
+                    method: "POST",
+                    body: data,
+                    headers: {
+                        Authorization: `Bearer ${getTokenLs?.token} `,
+                    },
                 }
             }
 
@@ -240,6 +275,7 @@ export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useCreateOrderByUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
+    useUpdateAvatarMutation,
     useRefreshAccessTokenMutation,
     useForgotPasswordResetMutation,
     useForgotPasswordMutation,

@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog/Blog";
-import CompareProduct from "./pages/CompareProduct";
 import Wishlist from "./pages/ProductList/Wishlist";
 import Login from "./pages/Auth/Login";
 import Forgotpassword from "./pages/Auth/Forgotpassword";
@@ -30,6 +29,7 @@ import LayoutUser from "./pages/user/Layout";
 import ChangePassword from "./pages/user/ChangePassword";
 import { LocalStorageEventTarget, clearLSUser, getTokenLs } from "./features/user/userSlice";
 import OurStore from "./pages/ProductList/OurStore";
+import CompareProduct from "./pages/ProductList/CompareProduct";
 
 function App() {
   useEffect(() => {
