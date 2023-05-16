@@ -1,14 +1,13 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 
-import { getUserFromLS } from "../features/user/userSlice";
+import { clearLSUser, getUserFromLS } from "../features/user/userSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000/api",
-  
+  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getUserFromLS();
     if (token) {
-       
       headers.set("Authorization", `Bearer ${token.token}`);
     }
     return headers;
@@ -16,54 +15,44 @@ const baseQuery = fetchBaseQuery({
 });
 
 export const customBaseQuery = async (args, api, extraOptions) => {
-  // try {
-  //   return await baseQuery(args, api, extraOptions);
-  // } catch (error) {
-  //   // Handle 401 errors here
-  //   console.log(error);
-  //   console.log("list check ", args, api, extraOptions);
-  //   if (error.status === 401) {
-  //     const token = getUserFromLS();
-  //     //   if (token && Date.now() < token.expiresIn) {
-  //     if (token) {
-  //       // Attempt to refresh the access token
-  //       console.log("check token", token);
-  //       // Attempt to refresh the access token
-  //       return api.endpointDefinitions[0]
-  //         .query({ refreshToken: token.refreshToken })
-  //         .then((response) => {
-  //           localStorage.setItem("customer", {
-  //             ...response.data,
-  //             token: response.data.token,
-  //           });
+  let result = await baseQuery(args, api, extraOptions);
 
-  //           return baseQuery(args, api, extraOptions);
-  //         });
-  //     }
-  //   }
-  //   return Promise.reject(error);
-  // }
+  if (result?.data?.err?.message === "jwt expired") {
+    console.log("sending refresh token");
+    const getToken = getUserFromLS();
+    // send refresh token to get new access token
+    const refreshResult = await baseQuery(
+      `user/refresh/${getToken.refreshToken}`,
+      api,
+      extraOptions
+    );
 
-  let result = await baseQuery(args, api, extraOptions)
-
-    if (result?.error?.originalStatus === 403) {
-        console.log('sending refresh token')
-        // send refresh token to get new access token 
-        const refreshResult = await baseQuery('/user/refresh', api, extraOptions)
-        console.log(refreshResult)
-        if (refreshResult?.data) {
-            const user = api.getState().auth
-            console.log(user)
-            // store the new token 
-            // api.dispatch(setCredentials({ ...refreshResult.data, user }))
-            // // retry the original query with new access token 
-            // result = await baseQuery(args, api, extraOptions)
+    // console.log("refreshResult ", refreshResult);
+    if (refreshResult && refreshResult.data && refreshResult.data.data) {
+      const user = api.getState().auth;
+      console.log("token res", refreshResult.data.data);
+      localStorage.setItem(
+        "customer",
+        JSON.stringify({ ...getToken, token: refreshResult.data.data })
+      );
+      // console.log("user dfdf", user);
+      // console.log("what is api", api);
+      // store the new token
+      // api.dispatch(setCredentials({ ...refreshResult.data, user }))
+      // retry the original query with new access token
+      result = await baseQuery(args, api, extraOptions);
+    } else {
+      console.log("logout");
+      // api.dispatch(logOut())
+      fetch("/logout").then((response) => {
+        if (response.ok) {
+          clearLSUser();
+          // toast.success("Logout Success");
+          // navigate("/login");
         }
-         else {
-            // api.dispatch(logOut())
-        }
+      });
     }
+  }
 
-    return result
+  return result;
 };
-

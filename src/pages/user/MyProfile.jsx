@@ -32,7 +32,15 @@ export default function MyProfile() {
   const { data: profile } = useGetProdfileQuery();
   const userLS = getUserFromLS();
   useMemo(() => {
-    localStorage.setItem("customer", JSON.stringify({ ...userLS, ...profile }));
+    localStorage.setItem(
+      "customer",
+      JSON.stringify({
+        ...userLS,
+        mobile: profile?.mobile,
+        name: profile?.name,
+        avatar: profile?.avatar,
+      })
+    );
   }, [userLS, profile]);
 
   const [updateProfileMutationFN, updateUserRes] = useUpdateProfileMutation();

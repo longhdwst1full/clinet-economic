@@ -1,5 +1,6 @@
 
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { customBaseQuery } from "../../Hook/customBaseQuery";
 
 export const LocalStorageEventTarget = new EventTarget()
 
@@ -17,29 +18,12 @@ export const clearLSUser = () => {
 
 export const userApi = createApi({
     reducerPath: "auth",
-    baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:5000/api",
-
-        // prepareHeaders: (headers, { getState }) => {
-        //     const token = getUserFromLS();
-        //     if (token) {
-
-        //         headers.set("Authorization", `Bearer ${token.token}`);
-        //     }
-        //     return headers;
-        // },
-    }),
+    baseQuery: customBaseQuery,
 
 
     endpoints: (buider) => ({
 
-        refreshAccessToken: buider.mutation({
-            query: (refreshToken) => ({
-                url: '/refresh',
-                method: 'POST',
-                body: { refreshToken },
-            }),
-        }),
+
 
         registerUser: buider.mutation({
             query(body) {
@@ -284,7 +268,13 @@ export const userApi = createApi({
             },
             invalidatesTags: (result, error, body) => [{ type: 'profileUser', id: 'User' }]
         }),
-
+        refreshAccessToken: buider.query({
+            query: () => ({
+                url: `user/refresh/${getTokenLs.refreshToken}`,
+                method: 'GET',
+                // body: { refreshToken },
+            }),
+        }),
     }),
 
 })
@@ -298,7 +288,7 @@ export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
     useUpdateAvatarMutation,
-    useRefreshAccessTokenMutation,
+    useRefreshAccessTokenQuery,
     useForgotPasswordResetMutation,
     useForgotPasswordMutation,
     useUpdateProfileMutation,

@@ -8,7 +8,7 @@ export default function Myorder() {
   const { data } = useGetUserOrdersQuery();
   const { status } = useParams();
 
-  console.log(data);
+  // console.log(data);
   const purchaseTabs = [
     { status: "all", name: "Tất cả" },
     { status: "xacnhan", name: "Chờ xác nhận" },
