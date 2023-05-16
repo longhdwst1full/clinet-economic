@@ -23,8 +23,6 @@ export const userApi = createApi({
 
     endpoints: (buider) => ({
 
-
-
         registerUser: buider.mutation({
             query(body) {
                 return {
@@ -48,24 +46,11 @@ export const userApi = createApi({
         }),
 
         getUserProductsWithList: buider.query({
-            query() {
-                return {
-                    url: "user/wishlist",
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token}`,
-                    },
-                }
-            },
+            query: () => "user/wishlist"
         }),
+
         getUserAddToCart: buider.query({
-            query() {
-                return {
-                    url: "user/cart",
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token}`,
-                    }
-                }
-            },
+            query: () => "user/cart",
             providesTags(result) {
                 if (result && Array.isArray(result)) {
 
@@ -84,12 +69,8 @@ export const userApi = createApi({
         }),
         addToCart: buider.mutation({
             query(body) {
-                const token = getUserFromLS()
                 return {
                     url: "user/cart",
-                    headers: {
-                        Authorization: `Bearer ${token?.token}`,
-                    },
                     method: "POST",
                     body: body
                 }
@@ -98,14 +79,10 @@ export const userApi = createApi({
         }),
 
 
-
         deleteUserAddToCart: buider.mutation({
             query(cartItemId) {
                 return {
                     url: `user/delete-product-cart`,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
                     body: {
                         cartItemId
                     },
@@ -114,7 +91,6 @@ export const userApi = createApi({
                 }
             },
             invalidatesTags: (result, error, id) => {
-
                 return [{ type: 'CartUser', id: id }]
             }
         }),
@@ -123,9 +99,6 @@ export const userApi = createApi({
             query({ cartItemId, newQuantity }) {
                 return {
                     url: `user/update-product-cart/${cartItemId}/${newQuantity}`,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
                     method: "POST",
                     body: ""
 
@@ -140,29 +113,14 @@ export const userApi = createApi({
             query(body) {
                 return {
                     url: `user/cart/create-order`,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
                     method: "POST",
                     body: body
-
                 }
             }
-
         }),
 
         getUserOrders: buider.query({
-            query: () => {
-                return {
-                    url: `user/getmyorders`,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
-                    method: "GET",
-
-
-                }
-            }
+            query: () => `user/getmyorders`
 
         }),
 
@@ -200,15 +158,7 @@ export const userApi = createApi({
         }),
 
         getProdfile: buider.query({
-            query: () => {
-                return {
-                    url: `user/profile`,
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
-                }
-            },
+            query: () => `user/profile`,
             providesTags(result) {
                 if (result && Array.isArray(result)) {
 
@@ -232,9 +182,7 @@ export const userApi = createApi({
                     url: `user/edit-user`,
                     method: "PUT",
                     body: data,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
+
                 }
             },
             invalidatesTags: (result, error, body) => [{ type: 'profileUser', id: 'User' }]
@@ -247,9 +195,7 @@ export const userApi = createApi({
                     url: `user/save-address`,
                     method: "PUT",
                     body: data,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
+
                 }
             }
 
@@ -261,20 +207,12 @@ export const userApi = createApi({
                     url: `user/avatar`,
                     method: "POST",
                     body: data,
-                    headers: {
-                        Authorization: `Bearer ${getTokenLs?.token} `,
-                    },
+
                 }
             },
             invalidatesTags: (result, error, body) => [{ type: 'profileUser', id: 'User' }]
         }),
-        refreshAccessToken: buider.query({
-            query: () => ({
-                url: `user/refresh/${getTokenLs.refreshToken}`,
-                method: 'GET',
-                // body: { refreshToken },
-            }),
-        }),
+
     }),
 
 })
@@ -288,7 +226,6 @@ export const { useGetUserProductsWithListQuery, useRegisterUserMutation,
     useAddToCartMutation,
     useLoginUserMutation,
     useUpdateAvatarMutation,
-    useRefreshAccessTokenQuery,
     useForgotPasswordResetMutation,
     useForgotPasswordMutation,
     useUpdateProfileMutation,

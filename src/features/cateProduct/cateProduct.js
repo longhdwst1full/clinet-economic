@@ -1,9 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { customBaseQuery } from "../../Hook/customBaseQuery";
  
  
 export const productCateApi = createApi({
     reducerPath: "productCate",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+    baseQuery: customBaseQuery,
     endpoints: (buider) => ({
         getAllProductCates: buider.query({
             query: () => "productcategory",

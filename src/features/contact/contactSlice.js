@@ -1,10 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { customBaseQuery } from "../../Hook/customBaseQuery";
  
 
  
 export const contactApi = createApi({
     reducerPath: "contacts",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+    baseQuery: customBaseQuery,
     endpoints: (buider) => ({
         createContactEnquiry: buider.mutation({
             query: (body) => {
@@ -12,7 +13,6 @@ export const contactApi = createApi({
                     url: "enquiry",
                     method: "POST",
                     body: body,
-
                 }
             }
         }),

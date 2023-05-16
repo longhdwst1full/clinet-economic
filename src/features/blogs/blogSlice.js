@@ -1,11 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getUserFromLS } from "../user/userSlice";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { customBaseQuery } from "../../Hook/customBaseQuery";
 
-const userLs = getUserFromLS();
-const token = userLs?.token
+ 
 export const blogApi = createApi({
     reducerPath: "blogs",
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+    baseQuery: customBaseQuery,
     endpoints: (buider) => ({
         getAllBlogs: buider.query({
             query: () => "blog",
@@ -15,6 +14,7 @@ export const blogApi = createApi({
             query: (id) => `blog/${id}`
 
         }),
+
         likeBlog: buider.mutation({
             query(id) {
 
@@ -22,25 +22,19 @@ export const blogApi = createApi({
                     url: "blog/likes",
                     method: "PUT",
                     body: { blogId: id },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+
 
                 }
             },
 
         }),
+
         dislikesBlog: buider.mutation({
             query(id) {
-
                 return {
                     url: "blog/dislikes",
                     method: "PUT",
                     body: { blogId: id },
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-
                 }
             },
 
