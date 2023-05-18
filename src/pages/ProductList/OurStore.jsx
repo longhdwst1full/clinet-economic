@@ -10,6 +10,8 @@ import { useGetAllProductsQuery } from "../../features/products/productSlice";
 import { useQueryConfig1 } from "../../Hook/useQueryConfig";
 import AsideFiter from "./AsideFiter";
 import SortProductTop from "./SortProductTop";
+import { useGetAllProductCatesQuery } from "../../features/cateProduct/cateProduct";
+import { toast } from "react-toastify";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
@@ -20,29 +22,20 @@ const OurStore = () => {
 
   const productList = useGetAllProductsQuery(queryString);
 
-  console.log(productList);
-  const { data, isLoading } = productList;
-  const [titleCateProduct, setTitleCateProduct] = useState();
+  const { data, isLoading, isError, error } = productList;
+
   const [listProducts, setListProducts] = useState([]);
+
   useEffect(() => {
     if (data && data.data) {
       setListProducts(data.data);
     }
-  }, [data]);
-  useEffect(() => {
-    if (titleCateProduct) {
-      setListProducts(
-        listProducts.filter((item) => item.category == titleCateProduct)
-      );
+    if (data && data.code === 404) {
+      toast.success("Không tìm thấy sản phầm phù hợp");
     }
-  }, []);
-  // const handleFilterCateClick = (title) => {
-  //   setTitleCateProduct();
-  // };
-  // const handleFillterByClick = () => {
-  //   if (titleCateProduct || data) {
-  //   }
-  // };
+  }, [data]);
+
+  const { data: dataCateProduct } = useGetAllProductCatesQuery();
 
   return (
     <>
@@ -55,12 +48,12 @@ const OurStore = () => {
           <div className="row">
             <AsideFiter
               queryConfig={queryConfig}
-              setTitleCateProduct={setTitleCateProduct}
+              productCate={dataCateProduct && dataCateProduct}
             />
             <div className="col-9">
               <div className="filter-sort-grid mb-4">
                 {/*  */}
-                <SortProductTop setGrid={setGrid} />
+                <SortProductTop queryConfig={queryConfig} setGrid={setGrid} />
               </div>
               <div className="products-list pb-5">
                 <div className="d-flex gap-10 flex-wrap">

@@ -1,12 +1,23 @@
 import React from "react";
 import Color from "../../components/Color";
-import { useGetAllProductCatesQuery } from "../../features/cateProduct/cateProduct";
-import { Link, createSearchParams } from "react-router-dom";
+import { Link, createSearchParams, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
-export default function AsideFiter({ queryConfig, setTitleCateProduct }) {
-  const { _expand } = queryConfig;
-  const productCate = useGetAllProductCatesQuery();
+export default function AsideFiter({ queryConfig, productCate }) {
+  const { _categoryId } = queryConfig;
+  const navigate = useNavigate();
+
+  const handleOnChageInput = (e) => {
+    const { value, name } = e.target;
+
+    navigate({
+      pathname: "",
+      search: createSearchParams({
+        ...queryConfig,
+        [name]: value,
+      }).toString(),
+    });
+  };
 
   return (
     <div className="col-3">
@@ -15,21 +26,17 @@ export default function AsideFiter({ queryConfig, setTitleCateProduct }) {
         <div>
           <ul className="ps-0">
             {productCate &&
-              productCate.data &&
-              productCate.data.map((item) => {
-                const isActive = _expand == item.title;
+              productCate.map((item) => {
+                const isActive = _categoryId === item._id;
 
                 return (
-                  <li
-                    key={item._id}
-                    onClick={() => setTitleCateProduct(item.title)}
-                  >
+                  <li key={item._id}>
                     <Link
                       to={{
                         pathname: "",
                         search: createSearchParams({
                           ...queryConfig,
-                          _expand: item._id,
+                          _categoryId: item._id,
                         }).toString(),
                       }}
                       className={classNames("tw-relative tw-px-2", {
@@ -81,26 +88,32 @@ export default function AsideFiter({ queryConfig, setTitleCateProduct }) {
             </div>
           </div>
           <h5 className="sub-title">Price</h5>
+
           <div className="d-flex align-items-center gap-10">
             <div className="form-floating">
               <input
-                type="email"
+                type="number"
                 className="form-control"
                 id="floatingInput"
+                name="priceMin"
                 placeholder="From"
+                onBlur={handleOnChageInput}
               />
               <label htmlFor="floatingInput">From</label>
             </div>
             <div className="form-floating">
               <input
-                type="email"
+                type="number"
                 className="form-control"
                 id="floatingInput1"
+                name="priceMax"
                 placeholder="To"
+                onChange={handleOnChageInput}
               />
               <label htmlFor="floatingInput1">To</label>
             </div>
           </div>
+
           <h5 className="sub-title">Colors</h5>
           <div>
             {/* color */}

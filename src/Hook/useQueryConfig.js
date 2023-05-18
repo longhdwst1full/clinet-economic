@@ -17,8 +17,9 @@ export const useQueryConfig1 = () => {
         priceMax: queryParams.priceMax,
         _expand: queryParams._expand
     }
+  
     Object.keys(queryConfig).forEach(key => {
-        if (queryConfig[key] === null || queryConfig[key] === undefined) {
+        if (queryConfig[key] === null || queryConfig[key] === "" || queryConfig[key] === undefined) {
             delete queryConfig[key];
         }
     });
