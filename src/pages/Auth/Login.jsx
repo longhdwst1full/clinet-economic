@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import BreadCrumb from "../../components/BreadCrumb";
 import Meta from "../../components/Meta";
@@ -20,7 +20,7 @@ const Login = () => {
   const [loginFn, loginRes] = useLoginUserMutation();
   const { isError, isSuccess, isLoading } = loginRes;
 
-  const { handleSubmit, setError, control } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -45,6 +45,13 @@ const Login = () => {
       toast.error(error);
     }
   };
+  const hanleClickFb = async () => {
+    window.open("http://localhost:5000/auth/facebook", "_self");
+  };
+  const hanleClickGG = async () => {
+    window.open("http://localhost:5000/auth/google", "_self");
+  };
+
   return (
     <>
       <Meta title={"Login"} />
@@ -88,6 +95,21 @@ const Login = () => {
                   </div>
                 </div>
               </form>
+
+              <Link
+                className="tw-w-full tw-p-2 tw-my-2 tw-bg-emerald-300  tw-rounded-md tw-text-center"
+                onClick={hanleClickFb}
+              >
+                Loign with fb
+              </Link>
+              <br />
+              <Link
+                className="tw-w-full tw-p-2 tw-my-2 tw-bg-emerald-300  tw-rounded-md tw-text-center"
+                onClick={hanleClickGG}
+              >
+                Loign with gg
+              </Link>
+              {/* </LoginSocialFacebook> */}
             </div>
           </div>
         </div>
